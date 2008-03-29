@@ -26,7 +26,7 @@ our @EXPORT = qw(
 	
 );
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 require XSLoader;
 XSLoader::load('Rinchi::Fortran::Preprocessor', $VERSION);
@@ -41,6 +41,202 @@ our %Handler_Setters = (
                     CdataEnd   => \&SetEndCdataHandler,
                     XMLDecl => \&SetXMLDeclHandler
                     );
+my %tagToKeyword = (
+  'abstract' => 'ABSTRACT',
+  'abstract_interface' => 'ABSTRACT INTERFACE',
+  'action' => 'ACTION',
+  'advance' => 'ADVANCE',
+  'access' => 'ACCESS',
+  'allocatable' => 'ALLOCATABLE',
+  'allocate' => 'ALLOCATE',
+  'assign' => 'ASSIGN',
+  'associate' => 'ASSOCIATE',
+  'asynchronous' => 'ASYNCHRONOUS',
+  'backspace' => 'BACKSPACE',
+  'bind' => 'BIND',
+  'blank' => 'BLANK',
+  'block' => 'BLOCK',
+  'block_data' => 'BLOCK DATA',
+  'call' => 'CALL',
+  'case' => 'CASE',
+  'character' => 'CHARACTER',
+  'class' => 'CLASS',
+  'class_default' => 'CLASS DEFAULT',
+  'class_is' => 'CLASS IS',
+  'close' => 'CLOSE',
+  'common' => 'COMMON',
+  'complex' => 'COMPLEX',
+  'contains' => 'CONTAINS',
+  'contiguous' => 'CONTIGUOUS',
+  'continue' => 'CONTINUE',
+  'cycle' => 'CYCLE',
+  'data' => 'DATA',
+  'deallocate' => 'DEALLOCATE',
+  'default' => 'DEFAULT',
+  'deferred' => 'DEFERRED',
+  'dimension' => 'DIMENSION',
+  'direct' => 'DIRECT',
+  'do' => 'DO',
+  'double' => 'DOUBLE',
+  'double complex' => 'DOUBLE COMPLEX',
+  'double precision' => 'DOUBLE PRECISION',
+  'elemental' => 'ELEMENTAL',
+  'else' => 'ELSE',
+  'else_if' => 'ELSE IF',
+  'else_where' => 'ELSE WHERE',
+  'end' => 'END',
+  'encoding' => 'ENCODING',
+  'end_associate' => 'END ASSOCIATE',
+  'end_block' => 'END BLOCK',
+  'end_block data' => 'END BLOCK DATA',
+  'end_do' => 'END DO',
+  'end_enum' => 'END ENUM',
+  'end_file' => 'END FILE',
+  'end_forall' => 'END FORALL',
+  'end_function' => 'END FUNCTION',
+  'end_if' => 'END IF',
+  'end_interface' => 'END INTERFACE',
+  'end_module' => 'END MODULE',
+  'end_procedure' => 'END PROCEDURE',
+  'end_program' => 'END PROGRAM',
+  'end_select' => 'END SELECT',
+  'end_submodule' => 'END SUBMODULE',
+  'end_subroutine' => 'END SUBROUTINE',
+  'end_type' => 'END TYPE',
+  'end_where' => 'END WHERE',
+  'entry' => 'ENTRY',
+  'eor' => 'EOR',
+  'equivalence' => 'EQUIVALENCE',
+  'err' => 'ERR',
+  'errmsg' => 'ERRMSG',
+  'exist' => 'EXIST',
+  'exit' => 'EXIT',
+  'extends' => 'EXTENDS',
+  'extensible' => 'EXTENSIBLE',
+  'external' => 'EXTERNAL',
+  'false' => 'FALSE',
+  'file' => 'FILE',
+  'final' => 'FINAL',
+  'flush' => 'FLUSH',
+  'fmt' => 'FMT',
+  'forall' => 'FORALL',
+  'form' => 'FORM',
+  'format' => 'FORMAT',
+  'formatted' => 'FORMATTED',
+  'function' => 'FUNCTION',
+  'generic' => 'GENERIC',
+  'goto' => 'GOTO',
+  'if' => 'IF',
+  'implicit' => 'IMPLICIT',
+  'implicit_none' => 'IMPLICIT NONE',
+  'import' => 'IMPORT',
+  'impure' => 'IMPURE',
+  'in' => 'IN',
+  'in_out' => 'IN OUT',
+  'include' => 'INCLUDE',
+  'inquire' => 'INQUIRE',
+  'integer' => 'INTEGER',
+  'intent' => 'INTENT',
+  'interface' => 'INTERFACE',
+  'intrinsic' => 'INTRINSIC',
+  'iostat' => 'IOSTAT',
+  'iomsg' => 'IOMSG',
+  'kind' => 'KIND',
+  'let' => 'LET',
+  'logical' => 'LOGICAL',
+  'module' => 'MODULE',
+  'mold' => 'MOLD',
+  'name' => 'NAME',
+  'named' => 'NAMED',
+  'namelist' => 'NAMELIST',
+  'nextrec' => 'NEXTREC',
+  'non_intrinsic' => 'NON INTRINSIC',
+  'non_overridable' => 'NON OVERRIDABLE',
+  'nonkind' => 'NONKIND',
+  'none' => 'NONE',
+  'nopass' => 'NOPASS',
+  'nullify' => 'NULLIFY',
+  'number' => 'NUMBER',
+  'open' => 'OPEN',
+  'opened' => 'OPENED',
+  'operator' => 'OPERATOR',
+  'optional' => 'OPTIONAL',
+  'out' => 'OUT',
+  'pad' => 'PAD',
+  'parameter' => 'PARAMETER',
+  'pass' => 'PASS',
+  'pause' => 'PAUSE',
+  'pointer' => 'POINTER',
+  'position' => 'POSITION',
+  'precision' => 'PRECISION',
+  'print' => 'PRINT',
+  'private' => 'PRIVATE',
+  'procedure' => 'PROCEDURE',
+  'program' => 'PROGRAM',
+  'protected' => 'PROTECTED',
+  'public' => 'PUBLIC',
+  'pure' => 'PURE',
+  'read' => 'READ',
+  'read_formatted' => 'READ FORMATTED',
+  'read_unformatted' => 'READ UNFORMATTED',
+  'read_write' => 'READ WRITE',
+  'real' => 'REAL',
+  'rec' => 'REC',
+  'recl' => 'RECL',
+  'return' => 'RETURN',
+  'rewind' => 'REWIND',
+  'round' => 'ROUND',
+  'save' => 'SAVE',
+  'select_case' => 'SELECT CASE',
+  'select_type' => 'SELECT TYPE',
+  'sequence' => 'SEQUENCE',
+  'sequential' => 'SEQUENTIAL',
+  'sign' => 'SIGN',
+  'size' => 'SIZE',
+  'source' => 'SOURCE',
+  'status' => 'STATUS',
+  'stop' => 'STOP',
+  'subroutine' => 'SUBROUTINE',
+  'target' => 'TARGET',
+  'then' => 'THEN',
+  'true' => 'TRUE',
+  'type' => 'TYPE',
+  'unformatted' => 'UNFORMATTED',
+  'unit' => 'UNIT',
+  'use' => 'USE',
+  'value' => 'VALUE',
+  'volatile' => 'VOLATILE',
+  'where' => 'WHERE',
+  'write' => 'WRITE',
+  'write_formatted' => 'WRITE FORMATTED',
+  'write_unformatted' => 'WRITE UNFORMATTED',
+);
+
+my %delimiters = (
+  'paren' => ['(', ')'],
+  'slash_delim' => ['/', '/'],
+  'bracket' => ['[', ']'],
+  'paren_slash' => ['(/', '/)'],
+);
+
+my %punctuators = (
+  'comma' => ',',
+  'eq' => '=',
+  'colon' => ':',
+  'dbl_colon' => '::',
+  'eos' => ';',
+  'member' =>'%',
+  'plus' =>'+',
+  'minus' =>'-',
+  'ast' =>'*',
+  'div' =>'/',
+  'power' =>'**',
+  'lt' =>'<',
+  'gt' =>'>',
+);
+
+my $closed;
+
 =head1 NAME
 
 Rinchi::Fortran::Preprocessor - An Fortran to XML preprocessor extension for 
@@ -59,8 +255,8 @@ scanned.
 
  my $closed = 0;
 
- my $cpp = new Rinchi::Fortran::Preprocessor;
- $cpp->setHandlers('Start'      => \&startElementHandler,
+ my $fpp = new Rinchi::Fortran::Preprocessor;
+ $fpp->setHandlers('Start'      => \&startElementHandler,
                    'End'        => \&endElementHandler,
                    'Char'       => \&characterDataHandler,
                    'Proc'       => \&processingInstructionHandler,
@@ -70,7 +266,7 @@ scanned.
                    'XMLDecl'    => \&xmlDeclHandler,
                    );
 
- $cpp->process_file('test_src/include_test_1.h',\@args);
+ $fpp->process_file('test_src/include_test_1.h',\@args);
 
  sub startElementHandler() {
    my ($tag, $hasChild, %attrs) = @_;
@@ -282,13 +478,373 @@ sub setHandlers {
 #  return @ret;
 }
 
-sub process_file {
+=item sub process_file($path, [\@args])
+
+ $fpp->process_file('some_file.fpp' ,\@args);
+
+Where $path is the path to the file to be parsed and $args is an optional 
+reference to an array of arguments.
+
+Parse the given file after passing the arguments if given.  Event handlers 
+should be set using the setHandlers method before this call is made.  
+Arguments are given similar to command line arguments and are defined as follows:
+
+General options:
+  -d, --depend=file           Specify dependency output file.
+  -D, --define=identifier     Define an object macro.
+  -U, --use=code              Specify a use on code.
+  -I, --incldir=directory     Specify a directory to search for include.
+  -C, --comment               Output comments.
+  -P, --locate                Output locations.
+  -e, --exclude               Drop excluded lines.
+  -m, --modtime               Inherit mod time.
+  --debug                     Output parser debugging info.
+  --treebug                   Output tree debugging info.
+
+Help options:
+  -?, --help                  Show this help message
+  --usage                     Display brief usage message
+
+=cut
+
+sub process_file($$) {
   my ($self, $path, $args) = @_;
   if (defined($args) and ref($args) eq 'ARRAY') {
     ProcessFileArg($path,$args);
   } else {
     ProcessFile($path);
   }
+}
+
+=item keyword_for_tag($tagName)
+
+  my $keyword = $fpp->keyword_for_tag($tag);
+
+or
+
+  my $keyword = Rinchi::Fortran::Preprocessor->keyword_for_tag($tag);
+
+=cut
+
+sub keyword_for_tag($) {
+  my $class_or_self = shift @_;
+  my $tag = shift @_;
+
+  return $tagToKeyword{$tag} if (exists($tagToKeyword{$tag}));
+  return undef;
+
+}
+
+=item delimiter_for_open_tag($tagName)
+
+  my $delim = $fpp->delimiter_for_open_tag($tag);
+
+or
+
+  my $delim = Rinchi::Fortran::Preprocessor->delimiter_for_open_tag($tag);
+
+
+=cut
+
+sub delimiter_for_open_tag($) {
+  my $class_or_self = shift @_;
+  my $tag = shift @_;
+
+  return $delimiters{$tag}->[0] if (exists($delimiters{$tag}));
+  return undef;
+
+}
+
+=item delimiter_for_close_tag($tagName)
+
+  my $delim = $fpp->delimiter_for_close_tag($tag);
+
+or
+
+  my $delim = Rinchi::Fortran::Preprocessor->delimiter_for_close_tag($tag);
+
+
+=cut
+
+sub delimiter_for_close_tag($) {
+  my $class_or_self = shift @_;
+  my $tag = shift @_;
+
+  return $delimiters{$tag}->[1] if (exists($delimiters{$tag}));
+  return undef;
+
+}
+
+=item op_or_punc_for_tag($tagName)
+
+  my $op_punc = $fpp->op_or_punc_for_tag($tag);
+
+or
+
+  my $op_punc = Rinchi::Fortran::Preprocessor->op_or_punc_for_tag($tag);
+
+=cut
+
+sub op_or_punc_for_tag($) {
+  my $class_or_self = shift @_;
+  my $tag = shift @_;
+
+  return $punctuators{$tag} if (exists($punctuators{$tag}));
+  return undef;
+
+}
+
+=item startElementHandler()
+
+Default start Element handler.
+
+=cut
+
+sub startElementHandler() {
+  my ($tag, $hasChild, %attrs) = @_;
+
+  print "<$tag";
+  foreach my $attr (sort keys %attrs) {
+    my $val = $attrs{$attr};
+    $val =~ s/&/&amp;/g;
+    $val =~ s/</&lt;/g;
+    $val =~ s/>/&gt;/g;
+    $val =~ s/\"/&quot;/g;
+    $val =~ s/\'/&apos;/g;
+    print " $attr=\"$val\"";
+  }
+  if ($hasChild == 0) {
+    print " />";
+    $closed = 1;
+#    if($new_line{$tag} & 1) {
+#      print "\n";
+#    }
+  } else {
+    print ">";
+    $closed = 0;
+#    if($new_line{$tag} & 2) {
+#      print "\n";
+#    }
+  }
+}
+
+=item endElementHandler()
+
+Default end Element handler.
+
+=cut
+
+sub endElementHandler() {
+  my ($tag) = @_;
+  if ($closed == 0) {
+    print "</$tag>";
+  } else {
+    $closed = 0;
+  }
+}
+
+=item characterDataHandler()
+
+Default Character Data handler.
+
+=cut
+
+sub characterDataHandler() {
+  my ($cdata) = @_;
+  print $cdata;
+}
+
+=item processingInstructionHandler()
+
+Default Processing Instruction handler.
+
+=cut
+
+sub processingInstructionHandler() {
+  my ($target,$data) = @_;
+  print "\n<?$target $data?>\n";
+}
+
+=item commentHandler()
+
+Default Comment handler.
+
+=cut
+
+sub commentHandler() {
+  my ($string) = @_;
+  print "<!-- $string -->\n";
+}
+
+=item startCdataHandler()
+
+Default start CDATA handler.
+
+=cut
+
+sub startCdataHandler() {
+  print "<![CDATA[";
+}
+
+=item endCdataHandler()
+
+Default end CDATA handler.
+
+=cut
+
+sub endCdataHandler() {
+   print "]]>";
+}
+
+=item xmlDeclHandler()
+
+Default XML Declaration handler.
+
+=cut
+
+sub xmlDeclHandler() {
+  my ($version, $encoding, $standalone) = @_;
+  print "<?xml version=\"$version\" encoding=\"$encoding\" standalone=\"$standalone\"?>\n";
+}
+
+=item sub xml_outpute($path, [\@args])
+
+ $fpp->xml_output('some_file.fpp' ,\@args);
+
+Where $path is the path to the file to be parsed and $args is an optional 
+reference to an array of arguments.
+
+Parse the given file after passing the arguments if given. Print the XML output 
+to standard output.  
+
+=cut
+
+sub xml_output($$) {
+  my ($self, $path, $args) = @_;
+
+  my $fpp = new Rinchi::Fortran::Preprocessor;
+  $fpp->setHandlers('Start'      => \&startElementHandler,
+                  'End'        => \&endElementHandler,
+                  'Char'       => \&characterDataHandler,
+                  'Proc'       => \&processingInstructionHandler,
+                  'Comment'    => \&commentHandler,
+                  'CdataStart' => \&startCdataHandler,
+                  'CdataEnd'   => \&endCdataHandler,
+                  'XMLDecl'    => \&xmlDeclHandler,
+                  );
+
+  if (defined($args) and ref($args) eq 'ARRAY') {
+    $fpp->process_file($path,$args);
+  } else {
+    $fpp->process_file($path);
+  }
+
+}
+
+# source_out handlers
+
+sub _startElementHandler() {
+  my ($tag, $hasChild, %attrs) = @_;
+
+  my $keyword = Rinchi::Fortran::Preprocessor->keyword_for_tag($tag);
+  if (defined($keyword)) {
+    print "$keyword";
+    return;
+  } elsif ($tag eq 'identifier') {
+    print $attrs{'identifier'};
+    return;
+  } elsif ($tag eq 'white_space') {
+    print $attrs{'value'};
+    return;
+  } elsif ($tag eq 'float_lit') {
+    print $attrs{'value'};
+    return;
+  } elsif ($tag eq 'char_lit') {
+    print "'$attrs{'value'}'";
+    return;
+  } elsif ($tag eq 'comment') {
+    print '! ';
+    return;
+  } else {
+    my $delim = Rinchi::Fortran::Preprocessor->delimiter_for_open_tag($tag);
+    if (defined($delim)) {
+      print "$delim";
+      return;
+    } else {
+      my $op_punc = Rinchi::Fortran::Preprocessor->op_or_punc_for_tag($tag);
+      if (defined($op_punc)) {
+        print "$op_punc";
+        return;
+      }
+    }
+  }
+}
+
+sub _endElementHandler() {
+  my ($tag) = @_;
+
+  my $delim = Rinchi::Fortran::Preprocessor->delimiter_for_close_tag($tag);
+  if (defined($delim)) {
+    print "$delim";
+  }
+}
+
+sub _characterDataHandler() {
+  my ($cdata) = @_;
+  print $cdata;
+}
+
+sub _processingInstructionHandler() {
+  my ($target,$data) = @_;
+  print "\n";
+}
+
+sub _commentHandler() {
+  my ($string) = @_;
+}
+
+sub _startCdataHandler() {
+}
+
+sub _endCdataHandler() {
+}
+
+sub _xmlDeclHandler() {
+  my ($version, $encoding, $standalone) = @_;
+}
+
+=item sub new_source($path, [\@args])
+
+ $fpp->new_source('some_file.fpp' ,\@args);
+
+Where $path is the path to the file to be parsed and $args is an optional 
+reference to an array of arguments.
+
+Parse the given file after passing the arguments if given. Print the new source 
+to standard output.  
+
+=cut
+
+sub new_source($$) {
+  my ($self, $path, $args) = @_;
+
+  my $fpp = new Rinchi::Fortran::Preprocessor;
+  $fpp->setHandlers('Start'      => \&_startElementHandler,
+                  'End'        => \&_endElementHandler,
+                  'Char'       => \&_characterDataHandler,
+                  'Proc'       => \&_processingInstructionHandler,
+                  'Comment'    => \&_commentHandler,
+                  'CdataStart' => \&_startCdataHandler,
+                  'CdataEnd'   => \&_endCdataHandler,
+                  'XMLDecl'    => \&_xmlDeclHandler,
+                  );
+
+  if (defined($args) and ref($args) eq 'ARRAY') {
+    $fpp->process_file($path,$args);
+  } else {
+    $fpp->process_file($path);
+  }
+
 }
 
 # Preloaded methods go here.

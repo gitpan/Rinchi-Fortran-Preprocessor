@@ -1,6 +1,7 @@
 Changes
 include_path.c
 include_path.h
+lexer.c
 lexer.h
 lexer.l
 lexer_routines.inc
@@ -23,6 +24,7 @@ Preprocessor.h
 Preprocessor.xs
 README
 Rinchi-Fortran-Preprocessor.ppd
+rinchi_string.c
 rinchi_string.h
 t/Rinchi-Fortran-Preprocessor.t
 test.pl

@@ -158,6 +158,9 @@ int yypp_lex (void);
 %token ALT_PUNCT_CLOSE_BRACKET
 %token ALT_PUNCT_HASH
 
+%token PUNC_DBL_COLON
+%token PUNC_ARROW
+
 %token KWD_ABSTRACT
 %token KWD_ABSTRACT_INTERFACE
 %token KWD_ACCESS
@@ -372,7 +375,6 @@ int yypp_lex (void);
 %token OP_DIVIDE
 %token OP_ASSIGN_DIVIDE
 %token OP_ELSE
-%token OP_SCOPE_REF
 %token OP_LT
 %token OP_SHIFT_LEFT
 %token OP_ASSIGN_SHIFT_LEFT
@@ -403,6 +405,9 @@ int yypp_lex (void);
 %token OP_ALT_BIT_PLUS
 %token OP_ALT_ASSIGN_BIT_PLUS
 
+%token OPEN_PARENTHESIS_SLASH
+%token CLOSE_PARENTHESIS_SLASH
+
 %token INV_ALT_LOGICAL_AND
 %token INV_ALT_ASSIGN_BIT_AND
 %token INV_ALT_BIT_AND
@@ -431,6 +436,7 @@ int yypp_lex (void);
 %token DECL_POINTER
 %token DECL_VAR_ARGS
 
+%token WHITE_SPACE
 %token SYSTEM_HEADER_STRING
 %token HEADER_STRING
 %token IDENTIFIER
@@ -594,7 +600,8 @@ preprocessing_token_seq: preprocessing_token
   | preprocessing_token_seq preprocessing_token
   ;
 
-preprocessing_token: header_name
+preprocessing_token: white_space
+  | header_name
   | identifier
   | pp_number
   | character_literal
@@ -790,6 +797,13 @@ key_word: kwd_abstract
   | kwd_write_unformatted
   ;
 
+white_space_opt: /* empty */
+  | white_space
+  ;
+
+white_space: WHITE_SPACE { handle_string_token(WHITE_SPACE_INDEX); }
+  ;
+
 pp_number: PP_NUMBER { handle_pp_number(); }
   | integer_literal
   | floating_literal
@@ -852,6 +866,8 @@ preprocessing_op_or_punc: bcs_exclamation
   | bcs_ampersand
   | bcs_open_parenthesis
   | bcs_close_parenthesis
+  | open_parenthesis_slash
+  | close_parenthesis_slash
   | bcs_asterisk
   | bcs_plus
   | bcs_comma
@@ -885,7 +901,8 @@ preprocessing_op_or_punc: bcs_exclamation
   | pointer_ptm
   | object_ptm
   | assign_divide
-  | scope_ref
+  | dbl_colon
+  | arrow
   | shift_left
   | assign_shift_left
   | le
@@ -1544,10 +1561,10 @@ pp_ne: OP_NE
   | OP_ALT_NE
   ;
 
-bcs_percent: modulo
+bcs_percent: member
   ;
 
-modulo: BCS_PUNCT_PERCENT { handle_token(OP_MODULO_INDEX); }
+member: BCS_PUNCT_PERCENT { handle_token(OP_MEMBER_INDEX); }
   ;
 
 pp_modulo: BCS_PUNCT_PERCENT
@@ -1582,6 +1599,12 @@ bcs_open_parenthesis: BCS_PUNCT_OPEN_PARENTHESIS { handle_token_open(BCS_PUNCT_O
   ;
 
 bcs_close_parenthesis: BCS_PUNCT_CLOSE_PARENTHESIS { handle_token_close(BCS_PUNCT_CLOSE_PARENTHESIS_INDEX); }
+  ;
+
+open_parenthesis_slash: OPEN_PARENTHESIS_SLASH { handle_token_open(OPEN_PARENTHESIS_SLASH_INDEX); }
+  ;
+
+close_parenthesis_slash: CLOSE_PARENTHESIS_SLASH { handle_token_close(CLOSE_PARENTHESIS_SLASH_INDEX); }
   ;
 
 bcs_asterisk: BCS_PUNCT_ASTERISK { handle_token(BCS_PUNCT_ASTERISK_INDEX); }
@@ -1662,7 +1685,10 @@ bcs_colon: BCS_PUNCT_COLON { handle_token(BCS_PUNCT_COLON_INDEX); }
 pp_conditional_separator: BCS_PUNCT_COLON
   ;
 
-scope_ref: OP_SCOPE_REF                 { handle_token(OP_SCOPE_REF_INDEX); }
+dbl_colon: PUNC_DBL_COLON                 { handle_token(PUNC_DBL_COLON_INDEX); }
+  ;
+
+arrow: PUNC_ARROW                 { handle_token(PUNC_ARROW_INDEX); }
   ;
 
 bcs_semicolon: BCS_PUNCT_SEMICOLON { handle_token(BCS_PUNCT_SEMICOLON_INDEX); }

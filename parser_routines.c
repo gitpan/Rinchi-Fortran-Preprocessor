@@ -741,8 +741,12 @@ void handle_command_line_define(char *arg) {
     *cp++ = 0;
     copy_string(arg);
     handle_macro_open(object_macro_index); 
+    handle_replacement_open(replacement_list_index);
     copy_string(cp);
     handle_string_token(STRING_LITERAL_INDEX);
+    handle_replacement_close(replacement_list_index);
+//    current_macro->replacement = current_macro->common.firstChild;
+//    current_macro->common.firstChild = 0;
   }
   handle_macro_close (object_macro_index);
 }

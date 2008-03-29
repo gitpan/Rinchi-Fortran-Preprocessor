@@ -229,6 +229,7 @@ void do_replacement() {
 
   repl = get_replacement_string();
 //  repl = get_function_replacement_string();
+  fprintf(stderr,"%s() = \"%s\";\n",__func__,repl);
   if (repl != NULL) {
     include_string(repl,BUFFER_TYPE_RESCAN);
   }

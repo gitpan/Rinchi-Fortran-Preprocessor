@@ -398,6 +398,8 @@ idcontn [0-9A-Za-z_]|[\xC0-\xDF][\x80-\xBF]|[\xE0-\xEC\xEE-\xEF][\x80-\xBF]{2}|[
 "%:"                                { return ALT_PUNCT_HASH; }
 
   /* "!="                                { return OP_NE; } */
+"/="                                { return OP_NE; }
+".ne."                              { return OP_NE; }
 "##"                                { return OP_TOKEN_SPLICE; }
 "%="                                { return OP_ASSIGN_MODULO; }
 "&&"                                { return OP_LOGICAL_AND; }
@@ -411,18 +413,24 @@ idcontn [0-9A-Za-z_]|[\xC0-\xDF][\x80-\xBF]|[\xE0-\xEC\xEE-\xEF][\x80-\xBF]{2}|[
 "->"                                { return OP_POINTER_MEMBER; }
 ".*"                                { return OP_OBJECT_POINTER_TO_MEMBER; }
 "..."                               { return DECL_VAR_ARGS; }
-"/="                                { return OP_ASSIGN_DIVIDE; }
-"::"                                { return OP_SCOPE_REF; }
+  /* "/="                                { return OP_ASSIGN_DIVIDE; } */
+"::"                                { return PUNC_DBL_COLON; }
 "<<="                               { return OP_ASSIGN_SHIFT_LEFT; }
 "<<"                                { return OP_SHIFT_LEFT; }
 "<="                                { return OP_LE; }
+".le."                              { return OP_LE; }
 "=="                                { return OP_EQ; }
+".eq."                              { return OP_EQ; }
+"=>"                                { return PUNC_ARROW; }
 ">="                                { return OP_GE; }
+".ge."                              { return OP_GE; }
 ">>="                               { return OP_ASSIGN_SHIFT_RIGHT; }
 ">>"                                { return OP_SHIFT_RIGHT; }
 "^="                                { return OP_ASSIGN_BIT_PLUS; }
 "|="                                { return OP_ASSIGN_BIT_OR; }
 "||"                                { return OP_LOGICAL_OR; }
+".lt."                              { return OP_LT; }
+".gt."                              { return OP_GT; }
 
 }
 
@@ -433,7 +441,7 @@ idcontn [0-9A-Za-z_]|[\xC0-\xDF][\x80-\xBF]|[\xE0-\xEC\xEE-\xEF][\x80-\xBF]{2}|[
 }
 
 <X_INIT>{
-[ \t]*                              { copy_string(yytext); return STRING_LITERAL; }
+[ \t]*                              { copy_string(yytext); return WHITE_SPACE; }
 }
 
 <X_PPD_IF>{
@@ -448,6 +456,8 @@ idcontn [0-9A-Za-z_]|[\xC0-\xDF][\x80-\xBF]|[\xE0-\xEC\xEE-\xEF][\x80-\xBF]{2}|[
 [%]      { return BCS_PUNCT_PERCENT; }
 [&]      { return BCS_PUNCT_AMPERSAND; }
 
+"(/"     { return OPEN_PARENTHESIS_SLASH; }
+"/)"     { return CLOSE_PARENTHESIS_SLASH; }
 [(]      { return BCS_PUNCT_OPEN_PARENTHESIS; }
 [)]      { return BCS_PUNCT_CLOSE_PARENTHESIS; }
 [*]      { return BCS_PUNCT_ASTERISK; }

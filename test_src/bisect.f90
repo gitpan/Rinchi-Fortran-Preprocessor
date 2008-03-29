@@ -27,8 +27,21 @@ PROGRAM  Bisection
    fLeft  = Funct(Left)                 ! compute their function values
    fRight = Funct(Right)
    WRITE(*,*)
-   WRITE(*,*)  'Left = ', Left, '    f(Left) = ', fLeft
-   WRITE(*,*)  'Right = ', Right, '   f(Right) = ', fRight
+   WRITE(*,*)  'Chwith = ', Left, '    f(Chwith) = ', fLeft             !//{cym} Welsh
+   WRITE(*,*)  'Linke = ', Left, '    f(Linke) = ', fLeft               !//{deu} German
+   WRITE(*,*)  'Left = ', Left, '    f(Left) = ', fLeft                 !//{eng} English
+   WRITE(*,*)  'Sinistra = ', Left, '    f(Sinistra) = ', fLeft         !//{ina,ita} Interlingua,Italian
+   WRITE(*,*)  'Sinister = ', Left, '    f(Sinister) = ', fLeft         !//{lat} Latin
+   WRITE(*,*)  'Esquerda = ', Left, '    f(Esquerda) = ', fLeft         !//{por} Portuguese
+   WRITE(*,*)  'Izquierda = ', Left, '    f(Izquierda) = ', fLeft       !//{spa} Spanish
+   WRITE(*,*)  'De = ', Right, '   f(De) = ', fRight                    !//{cym} Welsh
+   WRITE(*,*)  'Rechte = ', Right, '   f(Rechte) = ', fRight            !//{deu} German
+   WRITE(*,*)  'Right = ', Right, '   f(Right) = ', fRight              !//{eng} English
+   WRITE(*,*)  'Dextra = ', Right, '   f(Dextra) = ', fRight            !//{ina} Interlingua
+   WRITE(*,*)  'Destra = ', Right, '   f(Destra) = ', fRight            !//{ita} Italian
+   WRITE(*,*)  'Dexter = ', Right, '   f(Dexter) = ', fRight            !//{lat} Latin
+   WRITE(*,*)  'Dereita = ', Right, '   f(Dereita) = ', fRight          !//{por} Portuguese
+   WRITE(*,*)  'Derecha = ', Right, '   f(Derecha) = ', fRight          !//{spa} Spanish
    WRITE(*,*)
    IF (fLeft*fRight > 0.0)  THEN
       WRITE(*,*)  '*** ERROR: f(Left)*f(Right) must be negative ***'
